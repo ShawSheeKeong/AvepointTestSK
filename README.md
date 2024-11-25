@@ -28,7 +28,7 @@ Update the `appsettings.json` file in the project with your database connection 
 ```json
 {
     "ConnectionStrings": {
-        "DefaultConnection": "Server=<YOUR_SERVER>;Database=CafeDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+        "DefaultConnection": "Server=<YOUR_SERVER>;Database=AvepointTest;Trusted_Connection=True;MultipleActiveResultSets=true"
     }
 }
 ```
@@ -56,7 +56,7 @@ Run the following command to start the application:
 dotnet run
 ```
 
-The API will be accessible at `http://localhost:5000` by default.
+The API will be accessible at `http://localhost:5069` by default.
 
 ---
 
@@ -76,13 +76,3 @@ The API will be accessible at `http://localhost:5000` by default.
 
 ## Testing
 You can use tools like Postman or curl to test the endpoints. Ensure the database is set up and the application is running before testing.
-
----
-
-## Contribution
-Feel free to fork the repository and submit pull requests. Contributions are welcome!
-
----
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
