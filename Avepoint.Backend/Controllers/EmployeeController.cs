@@ -34,11 +34,16 @@ public class EmployeeController : ControllerBase
             e.Name,
             e.EmailAddress,
             e.PhoneNumber,
+            e.Gender,
             DaysWorked = e.CafeEmployees
                     .OrderByDescending(ce => ce.StartDate)
                     .Select(ce => (int)(DateTime.UtcNow - ce.StartDate).TotalDays)
                     .FirstOrDefault(),
-            Cafe = e.CafeEmployees
+            CafeId = e.CafeEmployees
+                    .OrderByDescending(ce => ce.StartDate)
+                    .Select(ce => ce.Cafe.Id)
+                    .FirstOrDefault(),
+            CafeName = e.CafeEmployees
                     .OrderByDescending(ce => ce.StartDate)
                     .Select(ce => ce.Cafe.Name)
                     .FirstOrDefault()
@@ -94,15 +99,11 @@ public class EmployeeController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(CreateEmployee), new { id = employee.Id }, new
-        {
-            Employee = employee,
-            Relationship = cafeEmployee
-        });
+        return CreatedAtAction(nameof(CreateEmployee), new { id = employee.Id });
     }
 
 
-    [HttpPut("/employee/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UpdateEmployeeRequest request)
     {
         var employee = await _context.Employees.FindAsync(id);
@@ -116,6 +117,7 @@ public class EmployeeController : ControllerBase
         employee.Name = request.Name ?? employee.Name;
         employee.EmailAddress = request.EmailAddress ?? employee.EmailAddress;
         employee.PhoneNumber = request.PhoneNumber ?? employee.PhoneNumber;
+        employee.Gender = request.Gender ?? employee.Gender;
         employee.LastUpdatedBy = request.LastUpdatedBy;
         employee.LastUpdatedTime = DateTime.UtcNow;
 
@@ -149,7 +151,7 @@ public class EmployeeController : ControllerBase
 
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEmployee(Guid id)
+    public async Task<IActionResult> DeleteEmployee(string id)
     {
         var employee = await _context.Employees.FindAsync(id);
         if (employee == null || employee.IsDeleted)

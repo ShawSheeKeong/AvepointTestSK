@@ -50,7 +50,7 @@ public class CafeController : ControllerBase
         _context.Cafes.Add(cafe);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(CreateCafe), new { id = cafe.Id }, cafe);
+        return CreatedAtAction(nameof(CreateCafe), new { id = cafe.Id });
     }
 
     [HttpPut("{id}")]
@@ -71,7 +71,7 @@ public class CafeController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("/cafe/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCafe(Guid id)
     {
         var cafe = await _context.Cafes
