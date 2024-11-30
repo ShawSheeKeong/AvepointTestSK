@@ -1,21 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import {
+  TextField,
+  Button,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import { addOrUpdateEmployee, getEmployees, getCafes } from "../../API/api";
 
 const AddEditEmployeePage = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    gender: '',
-    assignedCafe: '',
+    name: "",
+    emailAddress: "",
+    phoneNumber: "",
+    gender: "",
+    cafeName: "",
+    cafeId: "",
+    createdBy: navigator.userAgent,
+    lastUpdatedBy: navigator.userAgent,
   });
   const [cafes, setCafes] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Fetch existing data if editing an employee
   useEffect(() => {
     if (id) {
       getEmployees().then((res) => {
@@ -25,17 +37,30 @@ const AddEditEmployeePage = () => {
     }
   }, [id]);
 
-  // Fetch cafes for dropdown
   useEffect(() => {
     getCafes().then((res) => setCafes(res.data));
   }, []);
 
-  const handleSubmit = () => {
-    addOrUpdateEmployee(formData, id).then(() => navigate('/employees'));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const apiCall = id
+      ? addOrUpdateEmployee(formData, id)
+      : addOrUpdateEmployee(formData);
+
+    apiCall
+      .then(() => {
+        alert(`Employee ${id ? "updated" : "added"} successfully!`);
+        navigate("/employees");
+      })
+      .catch((err) => {
+        console.error("Error saving employee:", err);
+        alert("Failed to save employee. Please try again.");
+      });
   };
 
   const validatePhoneNumber = (phone) => {
-    const regex = /^[89]\d{7}$/; // Singapore phone number validation
+    const regex = /^[89]\d{7}$/;
     return regex.test(phone);
   };
 
@@ -43,16 +68,18 @@ const AddEditEmployeePage = () => {
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,
+      createdBy: navigator.userAgent,
+      lastUpdatedBy: navigator.userAgent,
     }));
   };
 
   return (
     <form>
-      <h1>{id ? 'Edit Employee' : 'Add Employee'}</h1>
+      <h1>{id ? "Edit Employee" : "Add Employee"}</h1>
       <TextField
         label="Name"
-        value={formData.name}
-        onChange={(e) => handleInputChange('name', e.target.value)}
+        value={formData.name || ""}
+        onChange={(e) => handleInputChange("name", e.target.value)}
         required
         inputProps={{ minLength: 6, maxLength: 10 }}
         helperText="Name should be between 6 and 10 characters."
@@ -63,8 +90,8 @@ const AddEditEmployeePage = () => {
       <TextField
         label="Email Address"
         type="email"
-        value={formData.email}
-        onChange={(e) => handleInputChange('email', e.target.value)}
+        value={formData.emailAddress || ""}
+        onChange={(e) => handleInputChange("emailAddress", e.target.value)}
         required
         helperText="Enter a valid email address."
         fullWidth
@@ -73,11 +100,13 @@ const AddEditEmployeePage = () => {
 
       <TextField
         label="Phone Number"
-        value={formData.phoneNumber}
-        onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+        value={formData.phoneNumber || ""}
+        onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
         required
-        error={!validatePhoneNumber(formData.phoneNumber) && formData.phoneNumber !== ''}
-        helperText="Must be an 8-digit number starting with 8 or 9."
+        error={
+          !validatePhoneNumber(formData.phoneNumber) &&
+          formData.phoneNumber !== ""
+        }
         fullWidth
         margin="normal"
       />
@@ -85,11 +114,11 @@ const AddEditEmployeePage = () => {
       <FormControl component="fieldset" margin="normal">
         <RadioGroup
           row
-          value={formData.gender}
-          onChange={(e) => handleInputChange('gender', e.target.value)}
+          value={formData.gender || ""}
+          onChange={(e) => handleInputChange("gender", e.target.value)}
         >
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
+          <FormControlLabel value="Male" control={<Radio />} label="Male" />
+          <FormControlLabel value="Female" control={<Radio />} label="Female" />
         </RadioGroup>
       </FormControl>
 
@@ -97,8 +126,8 @@ const AddEditEmployeePage = () => {
         <InputLabel id="cafe-select-label">Assigned Café</InputLabel>
         <Select
           labelId="cafe-select-label"
-          value={formData.assignedCafe}
-          onChange={(e) => handleInputChange('assignedCafe', e.target.value)}
+          value={formData.cafeId || ""}
+          onChange={(e) => handleInputChange("cafeId", e.target.value)}
         >
           {cafes.map((cafe) => (
             <MenuItem key={cafe.id} value={cafe.id}>
@@ -108,11 +137,15 @@ const AddEditEmployeePage = () => {
         </Select>
       </FormControl>
 
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ marginTop: "20px" }}>
         <Button variant="contained" onClick={handleSubmit}>
           Submit
         </Button>
-        <Button variant="outlined" onClick={() => navigate('/employees')} style={{ marginLeft: '10px' }}>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/employees")}
+          style={{ marginLeft: "10px" }}
+        >
           Cancel
         </Button>
       </div>

@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { Button, TextField } from '@mui/material';
-import { getEmployees, deleteEntity } from '../../API/api';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { Button, TextField } from "@mui/material";
+import { getEmployees, deleteEntity } from "../../Api/api";
+import { useNavigate } from "react-router-dom";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 
 const EmployeePage = () => {
   const [employees, setEmployees] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
-  // Fetch employees on component load
   useEffect(() => {
     fetchEmployees();
   }, []);
@@ -19,16 +20,21 @@ const EmployeePage = () => {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this employee?')) {
-      deleteEntity('employee', id).then(() => fetchEmployees());
+    if (window.confirm("Are you sure you want to delete this employee?")) {
+      deleteEntity("employee", id).then(() => fetchEmployees());
     }
   };
 
-  const filteredEmployees = employees.filter(
-    (employee) =>
+  const filteredEmployees = employees.filter((employee) => {
+    if (
       employee.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      employee.email.toLowerCase().includes(searchText.toLowerCase())
-  );
+      employee.emailAddress.toLowerCase().includes(searchText.toLowerCase())
+    ) {
+      return employee;
+    } else {
+      return null;
+    }
+  });
 
   return (
     <div>
@@ -40,21 +46,24 @@ const EmployeePage = () => {
         fullWidth
         margin="normal"
       />
-      <Button variant="contained" onClick={() => navigate('/add-employee')}>
+      <Button variant="contained" onClick={() => navigate("/add-employee")}>
         Add New Employee
       </Button>
-      <div className="ag-theme-alpine" style={{ height: 500, width: '100%', marginTop: '20px' }}>
+      <div
+        className="ag-theme-alpine"
+        style={{ height: 500, width: "100%", marginTop: "20px" }}
+      >
         <AgGridReact
           rowData={filteredEmployees}
           columnDefs={[
-            { headerName: 'Employee ID', field: 'id' },
-            { headerName: 'Name', field: 'name' },
-            { headerName: 'Email', field: 'email' },
-            { headerName: 'Phone Number', field: 'phoneNumber' },
-            { headerName: 'Days Worked', field: 'daysWorked' },
-            { headerName: 'Café Name', field: 'cafeName' },
+            { headerName: "Employee ID", field: "id" },
+            { headerName: "Name", field: "name" },
+            { headerName: "Email Address", field: "emailAddress" },
+            { headerName: "Phone Number", field: "phoneNumber" },
+            { headerName: "Days Worked in the café", field: "daysWorked" },
+            { headerName: "Café Name", field: "cafeName" },
             {
-              headerName: 'Actions',
+              headerName: "Actions",
               cellRenderer: (params) => (
                 <>
                   <Button
@@ -68,7 +77,7 @@ const EmployeePage = () => {
                     variant="contained"
                     color="error"
                     size="small"
-                    style={{ marginLeft: '10px' }}
+                    style={{ marginLeft: "10px" }}
                     onClick={() => handleDelete(params.data.id)}
                   >
                     Delete

@@ -3,9 +3,11 @@ import CafePage from './pages/Cafe/CafePage';
 import EmployeePage from './pages/Employee/EmployeePage';
 import AddEditCafePage from './pages/Cafe/AddEditCafePage';
 import AddEditEmployeePage from './pages/Employee/AddEditEmployeePage';
+import Navbar from './components/Navbar';
 
 const App = () => (
   <Router>
+     <Navbar />
     <Routes>
       <Route path="/cafes" element={<CafePage />} />
       <Route path="/employees" element={<EmployeePage />} />
