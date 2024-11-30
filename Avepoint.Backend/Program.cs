@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -16,6 +16,10 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddControllers();
+builder.Services.AddMediatR(typeof(CreateCafeCommand).Assembly);
+builder.Services.AddMediatR(typeof(GetAllCafeCommand).Assembly);
+builder.Services.AddMediatR(typeof(UpdateCafeCommand).Assembly);
+builder.Services.AddMediatR(typeof(DeleteCafeCommand).Assembly);
 
 var app = builder.Build();
 app.UseRouting();

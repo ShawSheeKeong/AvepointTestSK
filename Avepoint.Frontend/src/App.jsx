@@ -1,13 +1,13 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import CafePage from './pages/Cafe/CafePage';
-import EmployeePage from './pages/Employee/EmployeePage';
-import AddEditCafePage from './pages/Cafe/AddEditCafePage';
-import AddEditEmployeePage from './pages/Employee/AddEditEmployeePage';
-import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import CafePage from "./pages/Cafe/CafePage";
+import EmployeePage from "./pages/Employee/EmployeePage";
+import AddEditCafePage from "./pages/Cafe/AddEditCafePage";
+import AddEditEmployeePage from "./pages/Employee/AddEditEmployeePage";
+import Navbar from "./components/Navbar";
 
 const App = () => (
   <Router>
-     <Navbar />
+    <Navbar />
     <Routes>
       <Route path="/cafes" element={<CafePage />} />
       <Route path="/employees" element={<EmployeePage />} />

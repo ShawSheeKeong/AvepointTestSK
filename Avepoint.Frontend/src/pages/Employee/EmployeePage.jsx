@@ -2,21 +2,29 @@ import React, { useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { Button, TextField } from "@mui/material";
 import { getEmployees, deleteEntity } from "../../Api/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
 const EmployeePage = () => {
   const [employees, setEmployees] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [searchParams] = useSearchParams();
+  const cafeId = searchParams.get("cafeId");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    fetchEmployees(cafeId);
+  }, [cafeId]);
 
-  const fetchEmployees = () => {
-    getEmployees().then((res) => setEmployees(res.data));
+  const fetchEmployees = (cafeId) => {
+    if (cafeId) {
+      getEmployees().then((res) =>
+        setEmployees(res.data.filter((x) => x.cafeId == cafeId))
+      );
+    } else {
+      getEmployees().then((res) => setEmployees(res.data));
+    }
   };
 
   const handleDelete = (id) => {
